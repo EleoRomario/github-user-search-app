@@ -1,5 +1,5 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
 	const [appState, setAppState] = useState({
@@ -9,31 +9,58 @@ function App() {
 	const [search, setSearch] = useState({
 		value: "",
 	});
+	const [exist, setExist] = useState();
 	const findUser = (e) => {
 		setSearch(e.target.value);
-  };
-	const submitUser = (e) => {
+	};
+	const submitUser = async (e) => {
 		e.preventDefault();
 		setAppState({ loading: false });
-		const apiUrl = `https://api.github.com/users/${search}`;
-		fetch(apiUrl)
-			.then((response) => response.json())
-			.then((data) => {
-				setAppState({
-					loading: true,
-					data: data,
-				});
+		const apiUrl = await fetch(`https://api.github.com/users/${search}`);
+		if (apiUrl.status === 404) {
+			setExist(false);
+		} else {
+			const data = await apiUrl.json();
+			setAppState({
+				loading: true,
+				data: data,
 			});
-      console.log(appState.data);
+			setExist(true);
+		}
 	};
+	const [bg, setBg] = useState({
+		change: false,
+		text: "light",
+		icon: "uil uil-sun",
+	});
+	const changeBg = () => {
+		document.body.classList.toggle("dark-theme");
+		if (bg.change) {
+			setBg({
+				change: false,
+				text: "light",
+				icon: "uil uil-sun",
+			});
+		} else {
+			setBg({
+				change: true,
+				text: "dark",
+				icon: "uil uil-moon",
+			});
+		}
+	};
+	const date = (date) =>{
+		return new Date(date).toDateString();
+	}
+
 
 	return (
 		<div className="github__container">
 			<div className="github__header">
 				<h3 className="github__title">devfinde</h3>
-				<div className="github__btn">
-					light
-					<i className="uil uil-sun"></i>
+				<div className="github__btn" onClick={changeBg}>
+					{bg.text}
+					<i className={bg.icon}></i>
 				</div>
 			</div>
 			<form className="search__container" onSubmit={submitUser}>
@@ -59,7 +86,9 @@ function App() {
 								<h3>{appState.data.name}</h3>
 								<span>@{appState.data.login}</span>
 							</div>
-							<p className="user__joined">joined 25 jan 2012</p>
+							<p className="user__joined">
+								joined {date(appState.data.created_at)}
+							</p>
 						</div>
 						<div className="user__bio">{appState.bio}</div>
 						<div className="user__stats">
@@ -91,13 +120,24 @@ function App() {
 							</div>
 							<div className="item__contact">
 								<i className="uil uil-link"></i>
-								<a href={appState.data.html_url} _blank>
+								<a
+									href={appState.data.html_url}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
 									{appState.data.login}
 								</a>
 							</div>
 						</div>
 					</div>
 				</div>
+			)}
+			{exist === undefined ? (
+				""
+			) : !exist ? (
+				<div className="user__container">Usuario no encontrado</div>
+			) : (
+				""
 			)}
 		</div>
 	);

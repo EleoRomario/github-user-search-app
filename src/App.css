@@ -5,10 +5,10 @@
   --primary-color: #0479F9;
   --bg-color-light: #202A48;
   --text-color: #FFFFFF;
-  --text-color-light: #bebebe;
+  --text-color-light: #a9acc2;
 }
 body.dark-theme{
-  --bg-color: #F5F8FF;
+  --bg-color: #e2e7f1;
   --bg-color-light: #fff;
   --text-color: #1c1d1f;
 }
@@ -19,6 +19,10 @@ body{
 *{
   font-family: 'Space Mono',
   monospace !important;
+}
+a{
+  color: var(--primary-color);
+  text-decoration: none;
 }
 
 .github__container{
@@ -77,7 +81,6 @@ body{
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
-  border: 1px solid;
 }
 .user__header{
   display: flex;
@@ -125,4 +128,10 @@ body{
   margin-right: 0.5rem;
   font-size: 1rem;
   font-weight: 100;
+}
+.github__btn{
+  cursor: pointer;
+}
+.github__btn i{
+  margin: 0 1rem;
 }
